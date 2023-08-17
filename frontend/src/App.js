@@ -1,11 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container } from "react-bootstrap";
+import Header from "./components/Header";
 
 function App() {
   return (
-    <div className="App">
-      Hello World!!!
-    </div>
+    <>
+      <Header/>
+      <main className="py-3 text-center">
+        <Container>
+          <h1>Welcome To MERN Ecommerce</h1>
+        </Container>
+      </main>
+    </>
   );
 }
 
