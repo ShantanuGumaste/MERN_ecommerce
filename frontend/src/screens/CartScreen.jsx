@@ -1,15 +1,30 @@
 import { Button, Card, Col, FormControl, Image, ListGroup, ListGroupItem, Row } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message';
-import { FaTrash, FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
+import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 const CartScreen = () => {
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const dispatch = useDispatch();
 
     const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
+
+    const addToCartHandler = (product, qty) => {
+      dispatch(addToCart({...product, qty}))
+    }
+
+    const removeFromCartHandler = (id) => {
+      dispatch(removeFromCart(id));
+    }
+
+    const checkoutHandler = () => {
+      navigate('/login?redirect=/shipping')
+    }
 
   return (
     <Row className="mt-5">
@@ -35,7 +50,7 @@ const CartScreen = () => {
                     <FormControl
                       as="select"
                       value={item.qty}
-                      onChange={(e) => {}}
+                      onChange={(e) => addToCartHandler(item, Number(e.target.value))}
                     >
                       {[...Array(item.countInStock).keys()].map((x) => (
                         <option key={x + 1} value={x + 1}>
@@ -45,7 +60,7 @@ const CartScreen = () => {
                     </FormControl>
                   </Col>
                   <Col md={1}>
-                    <Button type="button" variant="dark">
+                    <Button onClick={()=>removeFromCartHandler(item._id)} type="button" variant="dark">
                       <FaTrashAlt />
                     </Button>
                   </Col>
@@ -60,8 +75,7 @@ const CartScreen = () => {
           <ListGroup variant="flush">
             <ListGroupItem>
               <h2>
-                SubTotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
-                Items
+                SubTotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)}) Items
               </h2>
               <h4 className="mt-3">
                 Total: ₹
@@ -74,6 +88,7 @@ const CartScreen = () => {
                 type="button"
                 className="btn-dark mt-3"
                 disabled={cartItems.length === 0}
+                onClick={checkoutHandler}
               >
                 Proceed To Checkout
               </Button>
